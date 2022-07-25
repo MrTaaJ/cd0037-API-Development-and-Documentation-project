@@ -185,7 +185,7 @@ def create_app(test_config=None):
                 )
                 search_questions = [question.format() for question in selection]
                 categories = Category.query.order_by(Category.id).all()
-                all_categories = [category.format() for category in categories]
+                all_categories = category_return(categories)
 
                 return jsonify(
                     {
@@ -203,7 +203,7 @@ def create_app(test_config=None):
                     selection = Question.query.order_by(Question.id).all()
                     current_questions = paginate_questions(request, selection)
                     categories = Category.query.order_by(Category.id).all()
-                    all_categories = [category.format() for category in categories]
+                    all_categories = category_return(categories)
 
                     return jsonify(
                         {
@@ -264,6 +264,40 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not.
     """
+
+    @app.route("/quizzes", methods=["POST"])
+    def retrieve_quiz_question():
+        body = request.get_json()
+
+        previous_questions = body.get("previous_questions", None)
+        current_category = body.get("quiz_category", None)
+        print(current_category)
+
+        try:
+            if current_category["id"] == 0:
+                selection = Question.query.order_by(Question.id)
+            else:
+                selection = Question.query.order_by(Question.id).filter(Question.category == current_category["id"])
+            current_questions = []
+            for question in selection:
+                current_question = question.format()
+                if current_question["id"] not in previous_questions:
+                    current_questions.append(current_question)
+            if len(current_questions) > 0:
+                i = random.randint(0, len(current_questions) - 1)
+                current_question = current_questions[i]
+                print(current_question)
+            else:
+                current_question = {}
+            
+            return jsonify(
+                        {
+                            "success": True,
+                            "question": current_question,
+                        }
+                    )
+        except:
+            abort(422)
 
     """
     @TODO:
