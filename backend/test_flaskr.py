@@ -72,7 +72,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "resource not found")
 
-    Delete Question Endpoint Test
+    # Delete Question Endpoint Test
 
     def test_delete_question(self):
         res = self.client().delete('/questions/6')
