@@ -75,14 +75,14 @@ class TriviaTestCase(unittest.TestCase):
     # Delete Question Endpoint Test
 
     # def test_delete_question(self):
-    #     res = self.client().delete('/questions/26')
+    #     res = self.client().delete('/questions/6')
     #     data = json.loads(res.data)
 
-    #     deleted_question = Question.query.filter(Question.id == 26).one_or_none()
+    #     deleted_question = Question.query.filter(Question.id == 6).one_or_none()
 
     #     self.assertEqual(res.status_code, 200)
     #     self.assertEqual(data['success'], True)
-    #     self.assertEqual(data['deleted'], 26)
+    #     self.assertEqual(data['deleted'], 6)
     #     self.assertTrue(len(data["questions"]))
     #     self.assertTrue(data["total_questions"])
     #     self.assertTrue(len(data["categories"]))

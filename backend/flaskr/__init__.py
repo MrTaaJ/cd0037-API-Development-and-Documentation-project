@@ -30,7 +30,6 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    # CORS(app, resources={r"*/api/*": {origins: '*'}})
     CORS(app)
 
     """
@@ -61,8 +60,7 @@ def create_app(test_config=None):
 
     @app.route("/categories")
     def retrieve_categories():
-        selection = Category.query.order_by(Category.id).all()
-        # categories = [category.format() for category in selection]
+        selection = Category.query.order_by(Category.id).all()        
         categories = category_return(selection)
 
         if len(selection) == 0:
@@ -191,7 +189,7 @@ def create_app(test_config=None):
                     {
                         "success": True,
                         "questions": search_questions,
-                        "total_questions": len(Question.query.all()),
+                        "total_questions": len(search_questions),
                         "categories": all_categories,
                     }
                 )
@@ -271,7 +269,6 @@ def create_app(test_config=None):
 
         previous_questions = body.get("previous_questions", None)
         current_category = body.get("quiz_category", None)
-        print(current_category)
 
         try:
             if current_category["id"] == 0:
@@ -286,7 +283,6 @@ def create_app(test_config=None):
             if len(current_questions) > 0:
                 i = random.randint(0, len(current_questions) - 1)
                 current_question = current_questions[i]
-                print(current_question)
             else:
                 current_question = {}
             

@@ -47,3 +47,261 @@ Pay special attention to what data the frontend is expecting from each API respo
 By making notes ahead of time, you will practice the core skill of being able to read and understand code and will have a simple plan to follow to build out the endpoints of your backend API.
 
 > View the [Frontend README](./frontend/README.md) for more details.
+
+## API Reference
+
+### Getting Started
+- Base URL: At present this app can only be run locally and is not hosted as a base URL. The backend app is hosted at the default, `http://127.0.0.1:5000/`, which is set as a proxy in the frontend configuration. 
+- Authentication: This version of the application does not require authentication or API keys. 
+
+### Error Handling
+Errors are returned as JSON objects in the following format:
+```
+{
+    "success": False, 
+    "error": 404,
+    "message": "resource not found"
+}
+```
+The API will return three error types when requests fail:
+- 400: bad request
+- 404: resource not found
+- 422: unprocessable 
+
+### Endpoints 
+
+#### GET /categories
+- General:
+    - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+    - Request Arguments: None
+    - Returns: An object with a single key, categories, that contains an object of id: category_string, key: value pairs, and the success value.
+- Sample: `curl http://127.0.0.1:5000/categories`
+
+``` {
+    'success': true
+    'categories': {
+        "1": "Science",
+        "2": "Art",
+        "3": "Geography",
+        "4": "History",
+        "5": "Entertainment",
+        "6": "Sports"
+    }
+        
+}
+```
+
+#### GET /questions?page=${integer}
+- General:
+    - Fetches a paginated set of questions, a total number of questions, and all categories.
+    - Request Arguments: page - integer
+    - Returns: An object with 10 paginated questions, total questions, object including all categories, and the success value.
+- Sample: `curl http://127.0.0.1:5000/questions` or `curl http://127.0.0.1:5000/questions?page=2`
+```
+{
+    'success': true
+    'questions': [
+        {
+            'id': 1,
+            'question': 'This is a question',
+            'answer': 'This is an answer',
+            'difficulty': 5,
+            'category': 2
+        },
+        {
+            'id': 2,
+            'question': 'This is another question',
+            'answer': 'This is another answer',
+            'difficulty': 3,
+            'category': 6
+        },
+    ],
+    'total_questions': 100,
+    'categories': { 
+        '1' : "Science",
+        '2' : "Art",
+        '3' : "Geography",
+        '4' : "History",
+        '5' : "Entertainment",
+        '6' : "Sports"
+    }
+}
+```
+
+### DELETE '/questions/${id}'
+- General:
+    - Deletes a specified question using the id of the question
+    - Request Arguments: id - integer
+    - Returns: An object with 10 paginated questions, total questions, object including all categories, deleted question's id, and the success value.
+- Sample: `curl -X DELETE http://127.0.0.1:5000/questions/2`
+```
+{
+    'success': true
+    'deleted': 2,
+    'questions': [
+        {
+            'id': 1,
+            'question': 'This is a question',
+            'answer': 'This is an answer',
+            'difficulty': 5,
+            'category': 2
+        },
+    ],
+    'total_questions': 100,
+    'categories': { 
+        '1' : "Science",
+        '2' : "Art",
+        '3' : "Geography",
+        '4' : "History",
+        '5' : "Entertainment",
+        '6' : "Sports"
+    }
+}
+```
+
+### GET '/categories/${id}/questions'
+- General:
+    - Fetches questions for a category specified by id request argument
+    - Request Arguments: id - integer
+    - Returns: An object with questions for the specified category, total questions, current category string, and the success value.
+- Sample: `curl http://127.0.0.1:5000/categories/4/questions`
+```
+{
+    'success': true
+    'questions': [
+        {
+            'id': 1,
+            'question': 'This is a question',
+            'answer': 'This is an answer',
+            'difficulty': 5,
+            'category': 4
+        },
+        {
+            'id': 2,
+            'question': 'This is another question',
+            'answer': 'This is another answer',
+            'difficulty': 3,
+            'category': 4
+        },
+    ],
+    'total_questions': 100,
+    'current_categories': 'History'
+}
+
+```
+
+### POST '/questions'
+- General:
+    - Sends a post request in order to add a new question
+    - Request Body:
+        ```
+        {
+            'question':  'A new Question?',
+            'answer':  'New Answer',
+            'difficulty': 4,
+            'category': 1,
+        }
+        ```
+    - Returns: An object with 10 paginated questions, total questions, object including all categories, created question's id, and the success value.
+- Sample: ` curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d "{\"question\":\"A new Question?\", \"answer\":\"New Answer\", \"difficulty\":\"4\", \"category\":\"1\"}" `
+```
+{
+    'success': true
+    'created': 3,
+    'questions': [
+        {
+            'id': 1,
+            'question': 'This is a question',
+            'answer': 'This is an answer',
+            'difficulty': 5,
+            'category': 2
+        },
+        {
+            'id': 2,
+            'question': 'This is another question',
+            'answer': 'This is another answer',
+            'difficulty': 3,
+            'category': 6
+        },
+    ],
+    'total_questions': 100,
+    'categories': { 
+        '1' : "Science",
+        '2' : "Art",
+        '3' : "Geography",
+        '4' : "History",
+        '5' : "Entertainment",
+        '6' : "Sports"
+    }
+}
+```
+
+### POST '/questions'
+- General:
+    - Sends a post request in order to search for a specific question by search term
+    - Request Body:
+        ```
+        {
+            'searchTerm': 'You search for this'
+        }
+        ```
+    - Returns: An array of questions, a number of totalQuestions that met the search term, an object including all categories, and the success value.
+- Sample: ` curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d "{\"searTerm\":\"You search for this\"}" `
+```
+{
+    'success': true
+    'questions': [
+        {
+            'id': 1,
+            'question': 'This is a question',
+            'answer': 'This is an answer',
+            'difficulty': 5,
+            'category': 2
+        },
+        {
+            'id': 2,
+            'question': 'This is another question',
+            'answer': 'This is another answer',
+            'difficulty': 3,
+            'category': 6
+        },
+    ],
+    'total_questions': 100,
+    'categories': { 
+        '1' : "Science",
+        '2' : "Art",
+        '3' : "Geography",
+        '4' : "History",
+        '5' : "Entertainment",
+        '6' : "Sports"
+    }
+}
+```
+
+### POST '/quizzes'
+- General:
+    - Sends a post request in order to search for a specific question by search term
+    - Request Body:
+        ```
+        {
+            'previous_questions': [1, 4, 20, 15]
+            'quiz_category': 'current category'
+        }
+        ```
+    - Returns: A single randomly selected new question object and the success value.
+- Sample: ` curl -X POST http://127.0.0.1:5000/quizzes -H "Content-Type: application/json" -d "{\"previous_questions\":\"[1, 4, 20, 15]\", \"quiz_category\":\"3\"}" `
+
+```
+{
+    'success': true
+    'questions': [
+        {
+            'id': 1,
+            'question': 'This is a question',
+            'answer': 'This is an answer',
+            'difficulty': 5,
+            'category': 3
+        }
+    ]
+}
+```
